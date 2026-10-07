@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import bcrypt from 'bcryptjs';
@@ -25,7 +26,7 @@ import {
   ADVERSARIAL_TEST_TRANSCRIPT,
 } from './server/sampleTranscripts.js';
 
-dotenv.config();
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

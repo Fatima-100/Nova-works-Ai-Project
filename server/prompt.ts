@@ -34,7 +34,7 @@ RULES:
 6. estimatedHours is developer EFFORT in hours as a number, never days between dates. Do not add management hours.
 7. Dates are in year 2026, format YYYY-MM-DD. Meeting date is 2026-10-07. Convert "20 October" to "2026-10-20". Each task deadline must be on or before its project deadline.
 8. A task title should be the short name used in the meeting (for example "Product catalog UI"). The description should say clearly what is in scope and what is out of scope.
-9. If a required value truly cannot be found, set it to null. Do not guess.
+9. If a required value truly cannot be found, do not create that task or project. Add a short note to "ignored" explaining what was missing. Never output null.
 10. Output must be valid JSON only.`;
 
 export function formatUserMessage(

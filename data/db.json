@@ -93,37 +93,37 @@
   ],
   "projects": [
     {
-      "id": "proj_1791352551483_1",
+      "id": "proj_1791359289411_1",
       "name": "UrbanCart Website",
       "clientName": "UrbanCart Inc.",
       "description": "MVP e-commerce web storefront.",
       "managerId": "PM01",
       "deadline": "2026-10-20",
-      "createdAt": "2026-10-07T05:55:51.483Z"
+      "createdAt": "2026-10-07T07:48:09.411Z"
     },
     {
-      "id": "proj_1791352551483_2",
+      "id": "proj_1791359289411_2",
       "name": "QuickServe Mobile App",
       "clientName": "QuickServe Delivery Services",
       "description": "Mobile application for service booking.",
       "managerId": "PM02",
       "deadline": "2026-10-24",
-      "createdAt": "2026-10-07T05:55:51.483Z"
+      "createdAt": "2026-10-07T07:48:09.411Z"
     },
     {
-      "id": "proj_1791352551483_3",
+      "id": "proj_1791359289411_3",
       "name": "HelpDeskPro AI Assistant",
       "clientName": "HelpDeskPro Corp.",
       "description": "AI assistant for help desk operations.",
       "managerId": "PM03",
       "deadline": "2026-10-22",
-      "createdAt": "2026-10-07T05:55:51.483Z"
+      "createdAt": "2026-10-07T07:48:09.411Z"
     }
   ],
   "tasks": [
     {
-      "id": "task_1791352551483_1_1",
-      "projectId": "proj_1791352551483_1",
+      "id": "task_1791359289411_1_1",
+      "projectId": "proj_1791359289411_1",
       "title": "Product catalog UI",
       "description": "Frontend development for product catalog.",
       "assigneeId": "DEV01",
@@ -132,8 +132,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_1_2",
-      "projectId": "proj_1791352551483_1",
+      "id": "task_1791359289411_1_2",
+      "projectId": "proj_1791359289411_1",
       "title": "Demo cart UI",
       "description": "Frontend development for demo cart.",
       "assigneeId": "DEV01",
@@ -142,8 +142,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_1_3",
-      "projectId": "proj_1791352551483_1",
+      "id": "task_1791359289411_1_3",
+      "projectId": "proj_1791359289411_1",
       "title": "Product and cart APIs",
       "description": "Backend API development for products and cart.",
       "assigneeId": "DEV02",
@@ -152,8 +152,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_1_4",
-      "projectId": "proj_1791352551483_1",
+      "id": "task_1791359289411_1_4",
+      "projectId": "proj_1791359289411_1",
       "title": "Website integration and testing",
       "description": "End-to-end website integration and testing.",
       "assigneeId": "DEV01",
@@ -162,8 +162,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_2_1",
-      "projectId": "proj_1791352551483_2",
+      "id": "task_1791359289411_2_1",
+      "projectId": "proj_1791359289411_2",
       "title": "Login and profile screens",
       "description": "Development of login and user profile screens.",
       "assigneeId": "DEV03",
@@ -172,8 +172,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_2_2",
-      "projectId": "proj_1791352551483_2",
+      "id": "task_1791359289411_2_2",
+      "projectId": "proj_1791359289411_2",
       "title": "Service booking screens",
       "description": "Development of service booking screens.",
       "assigneeId": "DEV03",
@@ -182,8 +182,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_2_3",
-      "projectId": "proj_1791352551483_2",
+      "id": "task_1791359289411_2_3",
+      "projectId": "proj_1791359289411_2",
       "title": "Booking and account APIs",
       "description": "Backend API development for booking and accounts.",
       "assigneeId": "DEV02",
@@ -192,8 +192,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_2_4",
-      "projectId": "proj_1791352551483_2",
+      "id": "task_1791359289411_2_4",
+      "projectId": "proj_1791359289411_2",
       "title": "Mobile integration and testing",
       "description": "Device testing and mobile integration.",
       "assigneeId": "DEV04",
@@ -202,8 +202,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_3_1",
-      "projectId": "proj_1791352551483_3",
+      "id": "task_1791359289411_3_1",
+      "projectId": "proj_1791359289411_3",
       "title": "FAQ document processing",
       "description": "Processing of FAQ documents for AI knowledge base.",
       "assigneeId": "DEV06",
@@ -212,8 +212,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_3_2",
-      "projectId": "proj_1791352551483_3",
+      "id": "task_1791359289411_3_2",
+      "projectId": "proj_1791359289411_3",
       "title": "Assistant answer generation",
       "description": "Development of core AI answer generation.",
       "assigneeId": "DEV05",
@@ -222,8 +222,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_3_3",
-      "projectId": "proj_1791352551483_3",
+      "id": "task_1791359289411_3_3",
+      "projectId": "proj_1791359289411_3",
       "title": "Human escalation flow",
       "description": "Development of in-app human escalation stub.",
       "assigneeId": "DEV05",
@@ -232,8 +232,8 @@
       "status": "Pending"
     },
     {
-      "id": "task_1791352551483_3_4",
-      "projectId": "proj_1791352551483_3",
+      "id": "task_1791359289411_3_4",
+      "projectId": "proj_1791359289411_3",
       "title": "Assistant evaluation and testing",
       "description": "Evaluation and testing of AI assistant performance.",
       "assigneeId": "DEV06",
@@ -253,7 +253,7 @@
     "Automated ticketing webhooks"
   ],
   "lastTranscriptRun": {
-    "timestamp": "2026-10-07T05:55:51.483Z",
+    "timestamp": "2026-10-07T07:48:09.411Z",
     "transcriptSummary": "NovaWorks Technologies - Sprint & Project Kickoff Meeting\nDate: 7 October 2026\nAttendees: Ayesha Khan (PM), Bilal Ahmed (PM), Hina Malik (PM), Ali Raz...",
     "createdProjectsCount": 3,
     "createdTasksCount": 12

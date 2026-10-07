@@ -3,10 +3,10 @@ import type { Request, Response } from 'express';
 import { db, UserRecord } from './db.js';
 
 const COOKIE_NAME = 'novaworks_session';
-const SECRET_KEY = new TextEncoder().encode(
-  process.env.SESSION_SECRET || 'novaworks-infinity-hack-super-secure-session-secret-2026'
-);
-
+if (!process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET is not set. Add it to your .env file.');
+}
+const SECRET_KEY = new TextEncoder().encode(process.env.SESSION_SECRET);
 export interface SessionPayload {
   userId: string;
   email: string;
@@ -29,7 +29,7 @@ export async function createSessionToken(user: UserRecord): Promise<string> {
 
 export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, SECRET_KEY);
+  const { payload } = await jwtVerify(token, SECRET_KEY, { algorithms: ['HS256'] });
     return payload as unknown as SessionPayload;
   } catch {
     return null;
