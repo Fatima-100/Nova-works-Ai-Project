@@ -9,6 +9,7 @@ import {
   Filter,
   ArrowRight,
   Loader2,
+  UserCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from './Toast';
@@ -58,7 +59,7 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
       );
 
       await api.updateTask(task.id, { status: nextStatus });
-      toast.success('Status Updated', `"${task.title}" is now ${nextStatus}`);
+      toast.success('Progress Updated', `"${task.title}" is now ${nextStatus}`);
     } catch (err: any) {
       toast.error('Update Failed', err.message);
       await fetchMyTasks();
@@ -67,12 +68,8 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
     }
   };
 
-  const cycleStatus = (task: Task) => {
-    const current = task.status || 'Pending';
-    const next: TaskStatus =
-      current === 'Pending' ? 'In Progress' : current === 'In Progress' ? 'Completed' : 'Pending';
-    handleStatusChange(task, next);
-  };
+  const completedCount = tasks.filter((t) => t.status === 'Completed').length;
+  const inProgressCount = tasks.filter((t) => t.status === 'In Progress').length;
 
   return (
     <div className="space-y-6">
@@ -81,12 +78,12 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-white tracking-tight">My Tasks</h1>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              {tasks.length} Assigned
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              {tasks.length} {tasks.length === 1 ? 'Task' : 'Tasks'}
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            Personal work queue for <span className="text-white font-medium">{user?.name}</span> ({user?.specialization}).
+            Personal task queue for <strong className="text-white">{user?.name}</strong> ({user?.specialization}).
           </p>
         </div>
 
@@ -97,8 +94,12 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
             <span className="text-base font-bold text-white font-mono">{tasks.length}</span>
           </div>
           <div className="px-3.5 py-2 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-center">
-            <span className="text-[10px] text-emerald-300 uppercase font-semibold block">Committed Effort</span>
+            <span className="text-[10px] text-emerald-300 uppercase font-semibold block">Total Effort</span>
             <span className="text-base font-bold text-emerald-200 font-mono">{totalHours}h</span>
+          </div>
+          <div className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-center">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Completed</span>
+            <span className="text-base font-bold text-emerald-400 font-mono">{completedCount}</span>
           </div>
         </div>
       </div>
@@ -123,11 +124,11 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
           <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mx-auto text-slate-500">
             <CheckSquare className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-semibold text-slate-300">No Tasks Assigned</h3>
+          <h3 className="text-base font-semibold text-slate-300">No Tasks Assigned to You</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             {user?.role === 'AGENT'
-              ? 'You do not have any tasks assigned to your developer ID yet. Run the transcript generator as Admin!'
-              : 'You are logged in as an ADMIN or MANAGER. Switch to a developer persona (Ali, Hamza, Sara) to test individual developer task queues.'}
+              ? 'You do not have any tasks in your queue yet. An administrator or manager can create them from meeting notes.'
+              : `You are signed in as a ${user?.role === 'ADMIN' ? 'Administrator' : 'Project Manager'}. Use the "Switch User" button at the top to try a developer profile (like Ali Raza or Hamza Shah).`}
           </p>
         </div>
       ) : (
@@ -153,7 +154,7 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
                     <span className="text-slate-600">·</span>
                     <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-slate-500" />
-                      Due: {task.deadline}
+                      Due {task.deadline}
                     </span>
                   </div>
 
@@ -166,7 +167,7 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
                   </h3>
 
                   <p className="text-xs text-slate-400 leading-relaxed max-w-2xl">
-                    {task.description || 'Sprint deliverable agreed in kickoff meeting.'}
+                    {task.description || 'Deliverable agreed in kickoff meeting.'}
                   </p>
                 </div>
 
@@ -184,13 +185,13 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
                         const isActive = status === s;
                         const colors = {
                           Pending: isActive
-                            ? 'bg-slate-800 text-slate-200 border-slate-700 shadow-sm'
+                            ? 'bg-slate-800 text-slate-100 border-slate-600 shadow-sm'
                             : 'text-slate-500 hover:text-slate-300',
                           'In Progress': isActive
-                            ? 'bg-amber-950 text-amber-300 border-amber-700/60 shadow-sm'
+                            ? 'bg-amber-950 text-amber-200 border-amber-700/60 shadow-sm'
                             : 'text-slate-500 hover:text-slate-300',
                           Completed: isActive
-                            ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60 shadow-sm'
+                            ? 'bg-emerald-950 text-emerald-200 border-emerald-700/60 shadow-sm'
                             : 'text-slate-500 hover:text-slate-300',
                         }[s];
 
@@ -217,7 +218,7 @@ export const MyTasks: React.FC<MyTasksProps> = ({ onSelectProject }) => {
                     <button
                       onClick={() => onSelectProject(task.projectId)}
                       className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                      title="View full project"
+                      title="Open full project board"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </button>

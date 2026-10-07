@@ -87,15 +87,22 @@ export const TeamDirectory: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs w-full sm:w-auto">
-            {(['ALL', 'MANAGER', 'AGENT', 'ADMIN'] as const).map((role) => (
+            {(
+              [
+                { key: 'ALL', label: 'All Team' },
+                { key: 'MANAGER', label: 'Managers' },
+                { key: 'AGENT', label: 'Developers' },
+                { key: 'ADMIN', label: 'Admins' },
+              ] as const
+            ).map((tab) => (
               <button
-                key={role}
-                onClick={() => setRoleFilter(role)}
+                key={tab.key}
+                onClick={() => setRoleFilter(tab.key)}
                 className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-                  roleFilter === role ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                  roleFilter === tab.key ? 'bg-slate-800 text-white shadow-sm font-semibold' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                {role}
+                {tab.label}
               </button>
             ))}
           </div>

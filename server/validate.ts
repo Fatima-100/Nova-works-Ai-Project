@@ -13,6 +13,7 @@ export const TaskSchema = z.object({
   assigneeId: z.string().min(1, 'Assignee ID is required'),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Deadline must be formatted YYYY-MM-DD'),
   estimatedHours: z.number().positive('Estimated hours must be greater than 0'),
+  status: z.enum(['Pending', 'In Progress', 'Completed']).default('Pending').optional(),
 });
 
 export const ProjectSchema = z.object({

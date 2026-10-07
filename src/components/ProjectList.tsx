@@ -10,10 +10,12 @@ import {
   AlertCircle,
   Briefcase,
   Layers,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
 import { Project } from '../types';
+import { QuickGuide } from './QuickGuide';
 
 interface ProjectListProps {
   onSelectProject: (projectId: string) => void;
@@ -50,21 +52,29 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onSelectProject, onNav
     return p.name.toLowerCase().includes(query) || p.clientName.toLowerCase().includes(query);
   });
 
+  const friendlyRoleName = {
+    ADMIN: 'Administrator (All Projects View)',
+    MANAGER: `Project Manager for ${user?.name}`,
+    AGENT: `Developer Workspace for ${user?.name}`,
+  }[user?.role || 'AGENT'];
+
   return (
     <div className="space-y-6">
+      <QuickGuide onNavigateToTranscript={onNavigateToTranscript} />
+
       {/* Top Header & Role Filter Announcement */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white tracking-tight">Projects</h1>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/30">
-              {projects.length} Available
+            <h1 className="text-2xl font-bold text-white tracking-tight">Active Projects</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+              {projects.length} {projects.length === 1 ? 'Project' : 'Projects'}
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            {user?.role === 'ADMIN' && 'Showing all projects across the company (Admin full oversight).'}
-            {user?.role === 'MANAGER' && `Showing projects assigned to you as Project Manager (${user.name}).`}
-            {user?.role === 'AGENT' && `Showing projects containing tasks assigned to you (${user.name}).`}
+            {user?.role === 'ADMIN' && 'Company-wide view: showing all projects and team deliverables.'}
+            {user?.role === 'MANAGER' && `Showing projects you manage as Project Manager (${user.name}).`}
+            {user?.role === 'AGENT' && `Showing projects where tasks are assigned to you (${user.name}).`}
           </p>
         </div>
 
@@ -81,16 +91,16 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onSelectProject, onNav
         </div>
       </div>
 
-      {/* Role Access Information Banner */}
+      {/* Role View Notice */}
       <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between text-xs text-slate-300">
         <div className="flex items-center gap-2.5">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>
-            Access Rule Active: <span className="font-semibold text-white">{user?.role}</span> access applied to data layer
+            Current View: <strong className="text-white">{friendlyRoleName}</strong>
           </span>
         </div>
-        <span className="text-[11px] font-mono text-slate-500 hidden sm:inline">
-          lib/access.ts · getProjects({user?.id})
+        <span className="text-[11px] text-slate-400 hidden sm:inline">
+          Use the top "Switch User" button to preview other roles
         </span>
       </div>
 
@@ -117,15 +127,16 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onSelectProject, onNav
           <h3 className="text-base font-semibold text-slate-300">No Projects Found</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             {user?.role === 'ADMIN'
-              ? 'No projects exist in the database yet. Paste the official transcript in the Admin Hub to generate them!'
-              : 'You have no assigned projects under your current persona.'}
+              ? 'No projects in the system yet. Go to AI Meeting Notes and click "Turn Transcript into Projects"!'
+              : 'You have no assigned projects in this role. Switch to another team member to view their board.'}
           </p>
           {user?.role === 'ADMIN' && onNavigateToTranscript && (
             <button
               onClick={onNavigateToTranscript}
-              className="mt-2 px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              className="mt-2 px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors inline-flex items-center gap-1.5"
             >
-              Go to Transcript Studio
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Create Projects from Meeting Notes</span>
             </button>
           )}
         </div>
@@ -151,7 +162,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onSelectProject, onNav
                     </span>
                     <span className="font-mono text-slate-400 flex items-center gap-1 text-[11px]">
                       <Calendar className="w-3 h-3 text-slate-500" />
-                      {proj.deadline}
+                      Due {proj.deadline}
                     </span>
                   </div>
 
@@ -162,7 +173,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onSelectProject, onNav
 
                   {/* Description */}
                   <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
-                    {proj.description || 'Sprint MVP Deliverables extracted from kickoff transcript.'}
+                    {proj.description || 'Sprint deliverables decided during team kickoff meeting.'}
                   </p>
                 </div>
 
@@ -182,7 +193,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onSelectProject, onNav
                       </span>
                     )}
                     <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300">
-                      {taskCount} tasks
+                      {taskCount} {taskCount === 1 ? 'task' : 'tasks'}
                     </span>
                     <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-indigo-950 border border-indigo-800/60 text-indigo-300 flex items-center gap-1">
                       <Clock className="w-3 h-3" />

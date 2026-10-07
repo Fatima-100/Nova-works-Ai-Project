@@ -1,4 +1,9 @@
 import { Project, Task, TeamMember, TranscriptProcessResponse, User } from '../types';
+import {
+  OFFICIAL_HACKATHON_TRANSCRIPT,
+  CHANGED_INPUT_TEST_TRANSCRIPT,
+  ADVERSARIAL_TEST_TRANSCRIPT,
+} from './sampleTranscripts';
 
 let cachedToken: string | null = null;
 
@@ -27,11 +32,22 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const res = await fetch(endpoint, {
-    ...options,
-    headers,
-    credentials: 'include', // sends cookies
-  });
+  let res: Response;
+  try {
+    res = await fetch(endpoint, {
+      ...options,
+      headers,
+      credentials: 'include', // sends cookies
+    });
+  } catch (netErr: any) {
+    const error = new Error(
+      netErr?.message && !netErr.message.includes('fetch')
+        ? netErr.message
+        : 'Could not connect to server. Please ensure the server is running.'
+    ) as any;
+    error.status = 0;
+    throw error;
+  }
 
   const data = await res.json().catch(() => null);
 
@@ -104,6 +120,21 @@ export const api = {
   },
 
   // Tasks
+  async createTask(
+    projectId: string,
+    task: { title: string; description?: string; assigneeId: string; deadline?: string; estimatedHours?: number }
+  ): Promise<Task> {
+    const res = await request<{ success: boolean; task: Task }>(`/api/projects/${projectId}/tasks`, {
+      method: 'POST',
+      body: JSON.stringify(task),
+    });
+    return res.task;
+  },
+
+  async deleteTask(taskId: string): Promise<void> {
+    await request(`/api/tasks/${taskId}`, { method: 'DELETE' });
+  },
+
   async updateTask(
     taskId: string,
     updates: Partial<{ estimatedHours: number; deadline: string; title: string; description: string; status: Task['status'] }>
@@ -136,11 +167,27 @@ export const api = {
     changedInput: string;
     adversarial: string;
   }> {
-    return await request<{
-      official: string;
-      changedInput: string;
-      adversarial: string;
-    }>('/api/sample-transcripts');
+    try {
+      const res = await request<{
+        official?: string;
+        changedInput?: string;
+        adversarial?: string;
+      }>('/api/sample-transcripts');
+      if (res && typeof res.official === 'string' && res.official.length > 0) {
+        return {
+          official: res.official,
+          changedInput: res.changedInput || CHANGED_INPUT_TEST_TRANSCRIPT,
+          adversarial: res.adversarial || ADVERSARIAL_TEST_TRANSCRIPT,
+        };
+      }
+    } catch {
+      // Fallback seamlessly to bundled copy
+    }
+    return {
+      official: OFFICIAL_HACKATHON_TRANSCRIPT,
+      changedInput: CHANGED_INPUT_TEST_TRANSCRIPT,
+      adversarial: ADVERSARIAL_TEST_TRANSCRIPT,
+    };
   },
 
   // Seed Reset
