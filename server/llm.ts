@@ -134,9 +134,9 @@ export async function processTranscriptWithAI(transcript: string): Promise<LLMPr
   const providers: Array<{ type: 'gemini' | 'openrouter'; model: string }> = [];
 
   if (process.env.GEMINI_API_KEY) {
-    providers.push({ type: 'gemini', model: 'gemini-flash-latest' });
-    providers.push({ type: 'gemini', model: 'gemini-3.1-flash-lite' });
+    providers.push({ type: 'gemini', model: 'gemini-2.5-flash' });
     providers.push({ type: 'gemini', model: 'gemini-3.8-flash' });
+    providers.push({ type: 'gemini', model: 'gemini-flash-latest' });
   }
 
   if (process.env.OPENROUTER_API_KEY) {

@@ -31,7 +31,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = 3000;
 
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
@@ -203,6 +203,63 @@ app.get('/api/projects/:id/tasks', requireAuth, async (req: Request, res: Respon
       assigneeName: userMap.get(t.assigneeId) || t.assigneeId,
     })),
   });
+});
+
+/**
+ * POST /api/projects/:id/tasks
+ * Allows project managers or admins to add a new task
+ */
+app.post('/api/projects/:id/tasks', requireAuth, async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const projectId = req.params.id;
+  const project = db.getProjectById(projectId);
+  if (!project) {
+    return res.status(404).json({ error: 'Project not found.' });
+  }
+
+  if (user.role !== 'ADMIN' && project.managerId !== user.id) {
+    return res.status(403).json({ error: 'Forbidden: Only the project manager or an administrator can add tasks.' });
+  }
+
+  const { title, description, assigneeId, deadline, estimatedHours } = req.body;
+  if (!title || !title.trim()) {
+    return res.status(400).json({ error: 'Task title is required.' });
+  }
+  if (!assigneeId) {
+    return res.status(400).json({ error: 'Please choose an assignee.' });
+  }
+  const assignee = db.getUserById(assigneeId);
+  if (!assignee) {
+    return res.status(400).json({ error: 'Assignee not found in directory.' });
+  }
+
+  const task = db.createTask({
+    id: `task_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    projectId,
+    title: title.trim(),
+    description: description?.trim() || '',
+    assigneeId,
+    deadline: deadline || project.deadline,
+    estimatedHours: Number(estimatedHours) || 8,
+    status: 'Pending',
+  });
+
+  return res.json({ success: true, task });
+});
+
+/**
+ * DELETE /api/tasks/:id
+ */
+app.delete('/api/tasks/:id', requireAuth, async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const task = db.getTaskById(req.params.id);
+  if (!task) return res.status(404).json({ error: 'Task not found.' });
+  const project = db.getProjectById(task.projectId);
+  if (user.role !== 'ADMIN' && project?.managerId !== user.id) {
+    return res.status(403).json({ error: 'Forbidden: Only the manager or an administrator can delete tasks.' });
+  }
+  db.deleteTask(task.id);
+  return res.json({ success: true, message: 'Task removed.' });
 });
 
 /**
@@ -408,7 +465,7 @@ app.post('/api/transcript', requireAuth, async (req: Request, res: Response) => 
             assigneeId: t.assigneeId,
             deadline: t.deadline,
             estimatedHours: t.estimatedHours,
-            status: 'Pending',
+            status: (t.status as any) || 'Pending',
           };
 
           tx.createTask(taskRecord);

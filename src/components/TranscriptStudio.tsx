@@ -20,6 +20,12 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from './Toast';
 import { api } from '../lib/api';
 import { Project, TranscriptProcessResponse, ValidationErrorItem } from '../types';
+import {
+  OFFICIAL_HACKATHON_TRANSCRIPT,
+  CHANGED_INPUT_TEST_TRANSCRIPT,
+  ADVERSARIAL_TEST_TRANSCRIPT,
+} from '../lib/sampleTranscripts';
+import { QuickGuide } from './QuickGuide';
 
 interface TranscriptStudioProps {
   onSuccessNavigate?: () => void;
@@ -29,17 +35,21 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
   const { user, quickLogin } = useAuth();
   const toast = useToast();
 
-  const [transcript, setTranscript] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(0);
-  const [previewOnly, setPreviewOnly] = useState(false);
-  const [replaceExisting, setReplaceExisting] = useState(true);
-
   const [samples, setSamples] = useState<{
     official: string;
     changedInput: string;
     adversarial: string;
-  } | null>(null);
+  }>({
+    official: OFFICIAL_HACKATHON_TRANSCRIPT,
+    changedInput: CHANGED_INPUT_TEST_TRANSCRIPT,
+    adversarial: ADVERSARIAL_TEST_TRANSCRIPT,
+  });
+
+  const [transcript, setTranscript] = useState(OFFICIAL_HACKATHON_TRANSCRIPT);
+  const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [previewOnly, setPreviewOnly] = useState(false);
+  const [replaceExisting, setReplaceExisting] = useState(true);
 
   const [lastResponse, setLastResponse] = useState<TranscriptProcessResponse | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationErrorItem[]>([]);
@@ -53,21 +63,20 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
     async function loadData() {
       try {
         const sampleData = await api.getSampleTranscripts();
-        setSamples(sampleData);
-        // Pre-fill with official transcript if empty
-        if (!transcript) {
-          setTranscript(sampleData.official);
+        if (sampleData && sampleData.official) {
+          setSamples(sampleData);
+          setTranscript((prev) => (prev ? prev : sampleData.official));
         }
-      } catch (err) {
-        console.error('Failed to load sample transcripts:', err);
+      } catch {
+        // Fall back gracefully to bundled presets
       }
 
       try {
         const meta = await api.getTranscriptMeta();
         if (meta.ignoredFeatures) setIgnoredFeatures(meta.ignoredFeatures);
         if (meta.lastRun) setLastRunMeta(meta.lastRun);
-      } catch (err) {
-        console.error('Failed to load transcript metadata:', err);
+      } catch {
+        // Ignore metadata fetch error on boot
       }
     }
     loadData();
@@ -75,12 +84,12 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
 
   const handleProcess = async () => {
     if (!isAdmin) {
-      toast.error('Forbidden', 'Only ADMIN can invoke the transcript processing endpoint.');
+      toast.error('Admin Required', 'Please switch to an Administrator account to create projects.');
       return;
     }
 
     if (!transcript.trim()) {
-      toast.warning('Empty Transcript', 'Please paste or load a meeting transcript before running.');
+      toast.warning('Empty Notes', 'Please paste meeting notes or click "Load Sample Meeting" first.');
       return;
     }
 
@@ -92,7 +101,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
     // Step-by-step progress visualizer
     const stepInterval = setInterval(() => {
       setLoadingStep((prev) => (prev < 4 ? prev + 1 : prev));
-    }, 900);
+    }, 850);
 
     try {
       const response = await api.processTranscript({
@@ -110,11 +119,11 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
       }
 
       if (response.preview) {
-        toast.info('Preview Ready', 'Extracted structured projects without committing to database.');
+        toast.info('Preview Ready', 'Extracted projects preview without saving.');
       } else {
         toast.success(
-          'Extraction Complete',
-          `Created ${response.createdProjectsCount || 0} projects and ${response.createdTasksCount || 0} tasks in 1 transaction.`
+          'Projects Ready!',
+          `Created ${response.createdProjectsCount || 0} projects and ${response.createdTasksCount || 0} tasks safely.`
         );
       }
     } catch (err: any) {
@@ -125,68 +134,73 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
 
       setLastResponse({
         success: false,
-        error: err.message || 'Failed to process transcript',
+        error: err.message || 'Could not process meeting notes.',
         validationErrors: errors,
       });
 
-      toast.error('Extraction Failed', err.message || 'Business rules or schema validation failed.');
+      toast.error('Check Needed', err.message || 'Some items in the notes did not match our team guidelines.');
     } finally {
       setLoading(false);
     }
   };
 
   const stepsList = [
-    { title: 'Sanitizing Input', desc: 'Injecting team directory (no password/email exposure)' },
-    { title: 'Calling AI Engine', desc: 'Temperature 0, JSON mode with fallback cascade' },
-    { title: 'Validating Schema & Rules', desc: 'Checking dates, employee IDs, roles & deadlines' },
-    { title: 'Atomic Transaction Commit', desc: 'Saving all projects and tasks or rolling back' },
+    { title: 'Reading Notes', desc: 'Checking meeting discussion and team roster' },
+    { title: 'Confirming Decisions', desc: 'Using final agreed deadlines and owner recap' },
+    { title: 'Checking Requirements', desc: 'Verifying dates, estimates, and team roles' },
+    { title: 'Saving Projects', desc: 'Writing all projects and tasks safely to your board' },
   ];
 
   return (
     <div className="space-y-6">
+      {/* Quick Guide Banner at the Top */}
+      <QuickGuide onNavigateToTranscript={() => {}} />
+
       {/* Top Header & Context */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-white tracking-tight">Transcript Studio</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Turn Meeting Notes into Projects</h1>
             <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
-              LLM Engine
+              AI Powered
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            Converts raw meeting conversations into validated, role-assigned Projects and Tasks.
+            Paste meeting notes or discussion recap. Our AI reads the final decisions, assigns the right team members,
+            and sets up your project boards.
           </p>
         </div>
 
         {/* Quick Action Buttons for Samples */}
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => samples && setTranscript(samples.official)}
-            disabled={loading || !samples}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-200 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            onClick={() => setTranscript(samples.official)}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-200 transition-colors flex items-center gap-1.5"
+            title="Load full sprint kickoff meeting notes"
           >
             <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            Official Transcript (All Traps)
+            Load Sample Meeting
           </button>
 
           <button
-            onClick={() => samples && setTranscript(samples.changedInput)}
-            disabled={loading || !samples}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition-colors flex items-center gap-1.5 disabled:opacity-50"
-            title="Tests dynamic AI on modified 12h/23 Oct estimate"
+            onClick={() => setTranscript(samples.changedInput)}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 transition-colors flex items-center gap-1.5"
+            title="Test changing hours & dates to verify AI responds dynamically"
           >
             <Clock className="w-3.5 h-3.5 text-amber-400" />
-            Changed-Input Test (12h/23 Oct)
+            Test Changed Values (12h/23 Oct)
           </button>
 
           <button
-            onClick={() => samples && setTranscript(samples.adversarial)}
-            disabled={loading || !samples}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 transition-colors flex items-center gap-1.5 disabled:opacity-50"
-            title="Tests error inspector on schema & role violations"
+            onClick={() => setTranscript(samples.adversarial)}
+            disabled={loading}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/60 text-rose-300 transition-colors flex items-center gap-1.5"
+            title="Test notes with missing members or dates beyond project deadline"
           >
             <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-            Adversarial Test
+            Test Warning Checks
           </button>
 
           <button
@@ -194,7 +208,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
             disabled={loading}
             className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-colors"
           >
-            Clear
+            Clear Text
           </button>
         </div>
       </div>
@@ -205,10 +219,10 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
           <div className="flex items-center gap-3">
             <Lock className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
-              <p className="text-sm font-semibold">Admin Permission Required</p>
+              <p className="text-sm font-semibold">Administrator Privileges Needed</p>
               <p className="text-xs text-amber-300/80">
-                You are currently logged in as <span className="font-bold">{user?.name}</span> ({user?.role}). Per
-                system access rules, only ADMIN can call <code className="bg-amber-900/60 px-1 py-0.5 rounded">POST /api/transcript</code>.
+                You are currently viewing as <span className="font-bold">{user?.name}</span> ({user?.role}). To create
+                company-wide projects from meeting notes, please switch to the Administrator account.
               </p>
             </div>
           </div>
@@ -216,7 +230,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
             onClick={() => quickLogin('admin@novaworks.example')}
             className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-colors shrink-0"
           >
-            Switch to Admin Persona
+            Switch to Administrator
           </button>
         </div>
       )}
@@ -229,10 +243,10 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <FileText className="w-4 h-4 text-indigo-400" />
-                Raw Meeting Transcript
+                Meeting Notes / Transcript
               </label>
               <span className="text-[11px] font-mono text-slate-500">
-                {transcript.length} chars · ~{Math.round(transcript.length / 4)} tokens
+                {transcript.length} characters
               </span>
             </div>
 
@@ -240,7 +254,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
               value={transcript}
               onChange={(e) => setTranscript(e.target.value)}
               disabled={loading}
-              placeholder="Paste meeting transcript here..."
+              placeholder="Paste your meeting notes here..."
               rows={16}
               className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3.5 text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 leading-relaxed resize-y selection:bg-indigo-600 selection:text-white"
             />
@@ -267,7 +281,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
                     disabled={loading}
                     className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span>Preview only (no DB save)</span>
+                  <span>Preview only (don't save)</span>
                 </label>
               </div>
 
@@ -279,12 +293,12 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
                 {loading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Processing with AI...</span>
+                    <span>Analyzing Notes with AI...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 text-white" />
-                    <span>Create from Transcript</span>
+                    <span>Turn Transcript into Projects</span>
                   </>
                 )}
               </button>
@@ -297,7 +311,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-wider text-indigo-300 flex items-center gap-2">
                   <Cpu className="w-4 h-4 animate-pulse text-indigo-400" />
-                  Live AI Execution Pipeline
+                  Building Your Projects
                 </p>
                 <span className="text-[11px] font-mono text-indigo-400 font-semibold">
                   Step {loadingStep} of 4
@@ -340,20 +354,20 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
 
         {/* Right Column: Ignored Features, Results & Validation Diagnostics */}
         <div className="lg:col-span-5 space-y-4">
-          {/* Ignored Features Panel (Key Hackathon Category!) */}
+          {/* Out of Scope / Ignored Items Panel */}
           <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
                 <ShieldAlert className="w-4 h-4 text-amber-400" />
-                Ignored by AI (Out of Scope / Rejected)
+                Left Out of Scope (Decided in Meeting)
               </h3>
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
                 {ignoredFeatures.length} items
               </span>
             </div>
-            <p className="text-xs text-slate-400 mb-3">
-              Features discussed but explicitly rejected or deferred in meeting (e.g. payments, maps, Kamran) were
-              strictly omitted from tasks.
+            <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+              Ideas that were discussed but explicitly skipped or postponed during the meeting (like live payments,
+              GPS maps, or external freelancers) were intentionally excluded from tasks.
             </p>
 
             {ignoredFeatures.length > 0 ? (
@@ -370,25 +384,26 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
               </div>
             ) : (
               <div className="p-4 rounded-lg border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                Run transcript extraction to populate rejected scope items.
+                Process a meeting transcript to see which ideas were left out of scope.
               </div>
             )}
           </div>
 
-          {/* Validation Diagnostics / Errors Panel */}
+          {/* Validation Diagnostics / Warning Panel */}
           {validationErrors.length > 0 && (
             <div className="rounded-xl border border-rose-500/40 bg-rose-950/20 p-4 shadow-xl space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
                   <XCircle className="w-4 h-4 text-rose-400" />
-                  Validation Guard Failures ({validationErrors.length})
+                  Issues Found in Notes ({validationErrors.length})
                 </h3>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-900/60 text-rose-200">
-                  Data Not Saved (Rollback)
+                  Not Saved to Protect Data
                 </span>
               </div>
-              <p className="text-xs text-rose-200/80">
-                The atomic transaction aborted and saved 0 records because the following business rules were violated:
+              <p className="text-xs text-rose-200/80 leading-relaxed">
+                The database did not save these changes because the meeting notes contain invalid assignments or dates.
+                Please check:
               </p>
 
               <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
@@ -398,12 +413,12 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
                     className="p-2.5 rounded-lg bg-rose-950/60 border border-rose-800/50 text-xs text-rose-200 space-y-1"
                   >
                     <div className="flex items-center justify-between font-mono text-[11px] text-rose-400">
-                      <span>Path: {err.path}</span>
+                      <span>Field: {err.path}</span>
                     </div>
                     <p className="font-sans text-xs text-rose-100">{err.message}</p>
                     {err.received !== undefined && (
                       <div className="text-[10px] font-mono text-rose-300 bg-rose-900/40 px-1.5 py-0.5 rounded">
-                        Received: {JSON.stringify(err.received)}
+                        Found: {JSON.stringify(err.received)}
                       </div>
                     )}
                   </div>
@@ -418,10 +433,10 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  Extraction Success
+                  Projects Created Successfully
                 </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-200 font-mono">
-                  {lastResponse.modelUsed || 'Gemini 3.8'}
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-200">
+                  Ready to Work
                 </span>
               </div>
 
@@ -431,7 +446,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
                   <p className="text-xl font-bold text-white mt-0.5">{lastResponse.projects.length}</p>
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
-                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Tasks Extracted</p>
+                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Tasks Assigned</p>
                   <p className="text-xl font-bold text-white mt-0.5">
                     {lastResponse.projects.reduce((sum, p) => sum + (p.tasks?.length || p.taskCount || 0), 0)}
                   </p>
@@ -467,7 +482,7 @@ export const TranscriptStudio: React.FC<TranscriptStudioProps> = ({ onSuccessNav
                   onClick={onSuccessNavigate}
                   className="w-full mt-2 py-2 px-3 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-1.5 transition-colors shadow-md"
                 >
-                  <span>View Projects & Task Boards</span>
+                  <span>Open Projects Board</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               )}
