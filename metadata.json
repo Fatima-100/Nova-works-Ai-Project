@@ -1,0 +1,7 @@
+{
+  "name": "NovaWorks AI Project Manager",
+  "description": "AI-powered Project Management CRM that transforms meeting transcripts into structured projects, tasks, and role-based assignments with robust access control.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

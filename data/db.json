@@ -1,0 +1,261 @@
+{
+  "users": [
+    {
+      "id": "ADMIN",
+      "name": "System Admin",
+      "email": "admin@novaworks.example",
+      "role": "ADMIN",
+      "specialization": "Operations & Engineering Leadership",
+      "skills": "[\"Project Management\",\"Resource Allocation\",\"System Auditing\",\"Executive Leadership\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "PM01",
+      "name": "Ayesha Khan",
+      "email": "ayesha@novaworks.example",
+      "role": "MANAGER",
+      "specialization": "E-Commerce & Web Platforms",
+      "skills": "[\"Agile\",\"Scrum\",\"E-Commerce\",\"Web Architecture\",\"Jira\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "PM02",
+      "name": "Bilal Ahmed",
+      "email": "bilal@novaworks.example",
+      "role": "MANAGER",
+      "specialization": "Mobile & Real-time Apps",
+      "skills": "[\"Mobile PM\",\"Sprint Planning\",\"Flutter\",\"React Native\",\"Release Management\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "PM03",
+      "name": "Hina Malik",
+      "email": "hina@novaworks.example",
+      "role": "MANAGER",
+      "specialization": "AI/ML Solutions & Integrations",
+      "skills": "[\"LLM PM\",\"Prompt Engineering\",\"Data Pipelines\",\"AI QA\",\"Model Benchmarking\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "DEV01",
+      "name": "Ali Raza",
+      "email": "ali@novaworks.example",
+      "role": "AGENT",
+      "specialization": "Frontend Engineering",
+      "skills": "[\"React\",\"Next.js\",\"Tailwind CSS\",\"TypeScript\",\"UI/UX Engineering\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "DEV02",
+      "name": "Hamza Shah",
+      "email": "hamza@novaworks.example",
+      "role": "AGENT",
+      "specialization": "Backend & API Architecture",
+      "skills": "[\"Node.js\",\"PostgreSQL\",\"REST APIs\",\"Express\",\"System Design\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "DEV03",
+      "name": "Sara Noor",
+      "email": "sara@novaworks.example",
+      "role": "AGENT",
+      "specialization": "Mobile UI/UX & Flutter",
+      "skills": "[\"Flutter\",\"Dart\",\"UI/UX Design\",\"Mobile Component Systems\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "DEV04",
+      "name": "Usman Tariq",
+      "email": "usman@novaworks.example",
+      "role": "AGENT",
+      "specialization": "Mobile Integration & QA",
+      "skills": "[\"Flutter Integration\",\"React Native\",\"Mobile QA\",\"CI/CD Pipelines\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "DEV05",
+      "name": "Zain Abbas",
+      "email": "zain@novaworks.example",
+      "role": "AGENT",
+      "specialization": "AI Engineer & LangChain",
+      "skills": "[\"Python\",\"FastAPI\",\"Gemini API\",\"Prompt Engineering\",\"RAG Architectures\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    },
+    {
+      "id": "DEV06",
+      "name": "Maryam Asif",
+      "email": "maryam@novaworks.example",
+      "role": "AGENT",
+      "specialization": "AI Evaluation & Document QA",
+      "skills": "[\"Evaluation Frameworks\",\"Document Processing\",\"NLP Validation\",\"QA Testing\"]",
+      "passwordHash": "$2b$10$BBwMAmzjSznBTGZqivycc.HLRmeHw3v4jrQnmVodLBzO/MSnCJJz."
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_1791352551483_1",
+      "name": "UrbanCart Website",
+      "clientName": "UrbanCart Inc.",
+      "description": "MVP e-commerce web storefront.",
+      "managerId": "PM01",
+      "deadline": "2026-10-20",
+      "createdAt": "2026-10-07T05:55:51.483Z"
+    },
+    {
+      "id": "proj_1791352551483_2",
+      "name": "QuickServe Mobile App",
+      "clientName": "QuickServe Delivery Services",
+      "description": "Mobile application for service booking.",
+      "managerId": "PM02",
+      "deadline": "2026-10-24",
+      "createdAt": "2026-10-07T05:55:51.483Z"
+    },
+    {
+      "id": "proj_1791352551483_3",
+      "name": "HelpDeskPro AI Assistant",
+      "clientName": "HelpDeskPro Corp.",
+      "description": "AI assistant for help desk operations.",
+      "managerId": "PM03",
+      "deadline": "2026-10-22",
+      "createdAt": "2026-10-07T05:55:51.483Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_1791352551483_1_1",
+      "projectId": "proj_1791352551483_1",
+      "title": "Product catalog UI",
+      "description": "Frontend development for product catalog.",
+      "assigneeId": "DEV01",
+      "deadline": "2026-10-12",
+      "estimatedHours": 12,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_1_2",
+      "projectId": "proj_1791352551483_1",
+      "title": "Demo cart UI",
+      "description": "Frontend development for demo cart.",
+      "assigneeId": "DEV01",
+      "deadline": "2026-10-15",
+      "estimatedHours": 8,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_1_3",
+      "projectId": "proj_1791352551483_1",
+      "title": "Product and cart APIs",
+      "description": "Backend API development for products and cart.",
+      "assigneeId": "DEV02",
+      "deadline": "2026-10-14",
+      "estimatedHours": 14,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_1_4",
+      "projectId": "proj_1791352551483_1",
+      "title": "Website integration and testing",
+      "description": "End-to-end website integration and testing.",
+      "assigneeId": "DEV01",
+      "deadline": "2026-10-19",
+      "estimatedHours": 6,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_2_1",
+      "projectId": "proj_1791352551483_2",
+      "title": "Login and profile screens",
+      "description": "Development of login and user profile screens.",
+      "assigneeId": "DEV03",
+      "deadline": "2026-10-12",
+      "estimatedHours": 8,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_2_2",
+      "projectId": "proj_1791352551483_2",
+      "title": "Service booking screens",
+      "description": "Development of service booking screens.",
+      "assigneeId": "DEV03",
+      "deadline": "2026-10-17",
+      "estimatedHours": 12,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_2_3",
+      "projectId": "proj_1791352551483_2",
+      "title": "Booking and account APIs",
+      "description": "Backend API development for booking and accounts.",
+      "assigneeId": "DEV02",
+      "deadline": "2026-10-16",
+      "estimatedHours": 16,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_2_4",
+      "projectId": "proj_1791352551483_2",
+      "title": "Mobile integration and testing",
+      "description": "Device testing and mobile integration.",
+      "assigneeId": "DEV04",
+      "deadline": "2026-10-22",
+      "estimatedHours": 10,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_3_1",
+      "projectId": "proj_1791352551483_3",
+      "title": "FAQ document processing",
+      "description": "Processing of FAQ documents for AI knowledge base.",
+      "assigneeId": "DEV06",
+      "deadline": "2026-10-13",
+      "estimatedHours": 10,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_3_2",
+      "projectId": "proj_1791352551483_3",
+      "title": "Assistant answer generation",
+      "description": "Development of core AI answer generation.",
+      "assigneeId": "DEV05",
+      "deadline": "2026-10-17",
+      "estimatedHours": 14,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_3_3",
+      "projectId": "proj_1791352551483_3",
+      "title": "Human escalation flow",
+      "description": "Development of in-app human escalation stub.",
+      "assigneeId": "DEV05",
+      "deadline": "2026-10-18",
+      "estimatedHours": 6,
+      "status": "Pending"
+    },
+    {
+      "id": "task_1791352551483_3_4",
+      "projectId": "proj_1791352551483_3",
+      "title": "Assistant evaluation and testing",
+      "description": "Evaluation and testing of AI assistant performance.",
+      "assigneeId": "DEV06",
+      "deadline": "2026-10-21",
+      "estimatedHours": 8,
+      "status": "Pending"
+    }
+  ],
+  "lastIgnoredFeatures": [
+    "Stripe payments",
+    "Live warehouse inventory",
+    "Kamran (freelance)",
+    "Live GPS driver tracking",
+    "Google Maps integration",
+    "Live payment gateway",
+    "Real SMTP email sending",
+    "Automated ticketing webhooks"
+  ],
+  "lastTranscriptRun": {
+    "timestamp": "2026-10-07T05:55:51.483Z",
+    "transcriptSummary": "NovaWorks Technologies - Sprint & Project Kickoff Meeting\nDate: 7 October 2026\nAttendees: Ayesha Khan (PM), Bilal Ahmed (PM), Hina Malik (PM), Ali Raz...",
+    "createdProjectsCount": 3,
+    "createdTasksCount": 12
+  }
+}
